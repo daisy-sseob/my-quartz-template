@@ -1,0 +1,21 @@
+li {padding: 3px;margin-top: 3px;font-weight: bold;}
+input[type=button], a {background-color: #1b97d3;color: white;border: 0;border-radius: 5px;font-weight: bold;min-height: 26px;padding: 5px;cursor: pointer;}
+input[type=button]:hover, a:hover  {background-color: #1077a9;color: white;transition-duration: 0.5s;}
+
+table{border-top:1px solid #ff1282;}
+table th{background:#f0f3fa; border-bottom:1px solid #dcdcdc; color:#444; font-size:12px; font-weight: bold; background:#f8f8f8; border-right:1px solid #ccc; border-left:1px solid #ccc;}
+th:nth-child(1){border-left:none;}
+table tr td{padding:10px; font-size: 13px; text-align: left; border-bottom:1px solid #ff1282; border-right:1px solid #ccc;}
+table tr td:hover{background-color: rgb(221, 221, 221); cursor: pointer; transition: all 0.4s; opacity: 0.9;}
+table tbody tr{border-bottom:1px solid #ff1282;}
+
+.trace {position: relative; cursor: pointer;}
+.tooltip {display: none;background-color: rgb(56, 56, 56);color: #fff;border-radius: 6px;padding: 5px;font-size: 16px;/* Position the tooltip */position: absolute;left: 10%;top: 20%;z-index: 1;opacity: 0.9;transition: all 0.3s;}
+#container {width: 100%;}
+#response_message { width: 1100px; height: 200px; resize: none; font-size: 14px; font-weight: bold; border: 5px solid; border-radius: 5px; padding: 10px;}
+.box{border: dotted 4px; padding: 8px; margin-top: 30px;}
+.cover{ border-radius: 6px;padding: 5px;font-size: 16px}
+
+#dangerzonePassword {width: 300px; padding: 5px; height: 26px; border-radius: 5px; border: solid 4px;}
+.dangerzone{background-color: rgb(177 175 175); opacity: 0.9;}
+.dangerzone:hover{background-color: rgb(122, 122, 122); cursor: pointer; transition: all 0.4s; opacity: 0.9;}

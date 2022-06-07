@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <!--  
+	    # scan : logback xml변경시 scan할지말지 option, scanPeriod : 소스변경시 몇초마다 스캔할지. scan이 끝나면 server restart없이 변경내용 반영.
+        # shutdownHook : logback이 정상종료 하게하기위한 option임
+    -->
+	<shutdownHook />
+	
+	<!-- # variable -->
+    <property name="logsPath" value="../logs/Quartz"/>
+    <property name="fileName" value="myQuartz"/>
+    <property name="errorFileName" value="myQuartz_error"/>
+    
+	<!--
+		# pattern option
+			- %logger{length} 						: logger name을 표시하는데 %logger(10)이면 10글자 알아서 축약해서 보여줌
+			- %thread 								: thread name print
+			- %-5level 								: log level print -5는 고정 출력폭임 ex) [debug ], [trace] debug4글자 + 빈칸1 추가됨
+			- %msg 									: log message
+			- %n 									: new line (줄바꿈)
+			- ${PID:-} 								: process id(PID) print
+			- %d 									: log time print ex) %d{YYYY-MM-dd HH:mm:ss} -> 2021-03-26 12:30:11
+			- %p 									: logging level. 위에 %level이랑 똑같음
+			- %F 									: 로깅이 발생한 프로그램 파일명
+			- %M 									: 로깅일 발생한 메소드의 이름
+			- %l 									: 로깅이 발생한 호출지의 정보
+			- %L 									: 로깅이 발생한 호출지의 라인 수
+			- %t 									: thread name print
+			- %c 									: 로깅이 발생한 카테고리
+			- %C 									: Class name print
+			- %m 									: 로그 메시지
+			- %r 									: 애플리케이션 시작 이후부터 로깅이 발생한 시점까지의 시간
+	 -->
+    <property name="layoutPattern" value=" [%d{yyyy-MM-dd HH:mm:ss.SSS}] [%-5level] [%thread] [%logger{50}:%line] - %msg%n "/>
+
+    <!-- # console -->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+	        <encoder>
+		        <charset>UTF-8</charset>
+	        	<Pattern>${layoutPattern}</Pattern>
+	        </encoder>
+        </layout>
+    </appender>
+    
+    <!-- # create file -->
+    <appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+	        <pattern>${layoutPattern}</pattern>
+	    </encoder>
+        
+        <!-- 
+            rollingPolicy
+
+            fileNamePattern
+                # maxFileSize 파일크기 option 값에 따라 파일을 생성하는데
+                # %i -> index를 이용하여 파일을 생성한다.
+                # .gz,.zip 등을 넣으면 자동 일자별 로그파일 압축
+
+            maxFileSize
+                # kb, mb, gb 단위 가능
+            
+            MinIndex, MaxIndex 
+                # MinIndex ~ MaxIndex 까지의 index를 가진 파일 생성
+
+            totalSizeCap
+                # 로그파일 아카이브의 최대 크기를 지정한다. maxHistory속성과 함께 사용해야한다.
+                # 총 용량이 2GB넘어가면 오래된 파일부터 삭제처리함.
+
+            maxHistory
+                # 최대 보관주기 일별이면 30일, 월별이면 30개월임 이후 삭제, 일별 월별은 fileNamePattern에 따라 결정된다.
+         -->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+            <fileNamePattern>${logsPath}/${fileName}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+            
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>20MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            
+            <MinIndex>1</MinIndex>
+            <MaxIndex>10</MaxIndex>
+
+            <!-- <totalSizeCap>2GB</totalSizeCap> -->
+            
+            <maxHistory>60</maxHistory>
+            
+        </rollingPolicy>
+    </appender>
+    
+	<!-- # create error log file  -->
+	<appender name="rollingErrorFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	
+        <!-- 
+            LevelFilter 
+                # 정확한 레벨 일치를 기반으로 이벤트를 필터링 한다. 
+                # 이벤트 레벨이 구성된 레벨이 같으면 onMatch onMismatch 특성의 구성에 따라 필터가 이벤트를 승인하거나 거부 하게 할 수 있다.
+        -->
+		
+	    <filter class="ch.qos.logback.classic.filter.LevelFilter">
+	        <level>error</level>
+	        <onMatch>ACCEPT</onMatch> <!-- # 일치시 승인  -->
+	        <onMismatch>DENY</onMismatch> <!-- #불일치시 거절 -->
+	    </filter>
+	
+	    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+	        <pattern>${layoutPattern}</pattern>
+	    </encoder>
+	
+	    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+	    
+	        <fileNamePattern>${logsPath}/error/${errorFileName}.%d{yyyy-MM-dd}_%i.log</fileNamePattern>
+	        
+	        <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+	        	<maxFileSize>20MB</maxFileSize>
+	        </timeBasedFileNamingAndTriggeringPolicy>
+	        
+			<MinIndex>1</MinIndex>
+			<MaxIndex>10</MaxIndex>
+			<!-- <totalSizeCap>1GB</totalSizeCap> -->
+			
+	        <maxHistory>90</maxHistory>
+	    </rollingPolicy> 
+	</appender>
+    
+	<!--
+			# log level. trace level로 내려갈수록 상세하게 logging한다. 
+				1. error 
+				2. warn 
+				3. info 
+				4. debug 
+				5. trace
+	-->
+    <root level="info">
+        <appender-ref ref="console" />
+        <appender-ref ref="rollingFile" />
+        <appender-ref ref="rollingErrorFile" />
+    </root>
+    
+    <!-- # additivity 중복 로깅 여부 상위 logger의 설정값을 상속받지 않음. -->
+    <logger name="com" additivity="false">
+    	<level value="debug" />
+        <appender-ref ref="console" />
+        <appender-ref ref="rollingFile" />
+        <appender-ref ref="rollingErrorFile" />
+    </logger>
+    
+</configuration>
